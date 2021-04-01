@@ -1,12 +1,18 @@
 function Tile(props) {
 
+    function click() {
+        props.switch(props.tile.index);
+    }
 
+    function switchable() {
+        props.canSwitch(props.tile.index);
+    }
 
-    return(
+    return (
         <div className="col col-3 border">
-            stuff
-            {/* <div className="" onClick={props.switch}>
-            </div> */}
+            <div className="" onClick={switchable ? click : null}>
+                {props.tile.blank ? null : props.tile.image}
+            </div>
         </div>
     )
 }
