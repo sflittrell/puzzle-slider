@@ -11,10 +11,11 @@ class App extends React.Component {
       gridWidth: 4,
       tileArr: [],
       win: false,
-      indexOfBlank: null,
+      indexOfBlank: 15,
 
     }
 this.switch = this.switch.bind(this);
+this.canSwitch = this.canSwitch.bind(this);
   }
 
   componentDidMount() {
@@ -30,9 +31,10 @@ this.switch = this.switch.bind(this);
       }
       let tile = {
         row: Math.floor(i / gW),
-        column: i % 4,
+        column: i % gW,
+        currentPosition: i,
         winPosition: [Math.floor(i / gW), i % gW],
-        index: i,
+        index: i, // is this needed?
         blank: blank1,
         image: i
       }
@@ -42,7 +44,7 @@ this.switch = this.switch.bind(this);
     }
     this.setState({
       tileArr: board,
-      blankPosition: [gW - 1, gW - 1]
+      // blankPosition: [gW - 1, gW - 1]
     })
   }
 
@@ -50,13 +52,24 @@ this.switch = this.switch.bind(this);
 
   }
 
-  canSwitch(index) {
-    // let canSwitch = false;
-    // if
+  canSwitch(i) {
+    let canSwitch = false;
+    let gW = this.state.gridWidth
+    let indexOfBlank = this.state.indexOfBlank
+    console.log(indexOfBlank)
+    if (Math.floor(indexOfBlank / gW) == Math.floor(i / gW) && (Math.abs((indexOfBlank % gW) - (i % gW)) == 1)) {
+      canSwitch = true
+    }
 
+    if ((indexOfBlank % gW) == (i % gW) && (Math.abs(Math.floor(indexOfBlank / gW) - Math.floor(i / gW)) == 1)) {
+      canSwitch = true
+    }
+    console.log(canSwitch)
+    return canSwitch
   }
 
   switch(index) {
+    console.log(this.state.indexOfBlank)
     let blankIndex = this.state.tileArr.findIndex((tile) => tile.blank)
     console.log(blankIndex)
     console.log('click')
@@ -115,6 +128,7 @@ this.switch = this.switch.bind(this);
             tile={tile} 
             key={index} 
             switch={this.switch}
+            canSwitch={this.canSwitch}
           />
         )}
         </div>
