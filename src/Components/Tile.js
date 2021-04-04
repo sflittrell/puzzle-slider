@@ -5,9 +5,9 @@ function Tile(props) {
     // }
 
     function switchable() {
-        console.log(props.tile.index)
+        // console.log(props.tile.index)
         if (props.canSwitch(props.tile.index)) {
-            props.switch(props.tile.index);
+            props.switch(props.tile.currentPosition, props.tile.index);
         }
 
     }

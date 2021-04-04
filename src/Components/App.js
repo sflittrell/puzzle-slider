@@ -30,10 +30,10 @@ this.canSwitch = this.canSwitch.bind(this);
         blank1 = true
       }
       let tile = {
-        row: Math.floor(i / gW),
-        column: i % gW,
+        // row: Math.floor(i / gW),
+        // column: i % gW,
         currentPosition: i,
-        winPosition: [Math.floor(i / gW), i % gW],
+        winPosition: i,
         index: i, // is this needed?
         blank: blank1,
         image: i
@@ -56,7 +56,8 @@ this.canSwitch = this.canSwitch.bind(this);
     let canSwitch = false;
     let gW = this.state.gridWidth
     let indexOfBlank = this.state.indexOfBlank
-    console.log(indexOfBlank)
+    console.log('index of blank', indexOfBlank)
+    console.log('index of clicked', i)
     if (Math.floor(indexOfBlank / gW) == Math.floor(i / gW) && (Math.abs((indexOfBlank % gW) - (i % gW)) == 1)) {
       canSwitch = true
     }
@@ -64,33 +65,42 @@ this.canSwitch = this.canSwitch.bind(this);
     if ((indexOfBlank % gW) == (i % gW) && (Math.abs(Math.floor(indexOfBlank / gW) - Math.floor(i / gW)) == 1)) {
       canSwitch = true
     }
-    console.log(canSwitch)
+    console.log('can switch', canSwitch)
     return canSwitch
   }
 
-  switch(index) {
-    console.log(this.state.indexOfBlank)
+  switch(tilePosition, index) {
+    // console.log(this.state.indexOfBlank)
     let blankIndex = this.state.tileArr.findIndex((tile) => tile.blank)
-    console.log(blankIndex)
-    console.log('click')
+    // console.log(blankIndex)
+    // console.log('click')
     let arrCopy = this.state.tileArr;
-    let row = arrCopy[index].row
-    let column = arrCopy[index].column
-    let image = arrCopy[index].image
-
-    arrCopy[index].row = arrCopy[blankIndex].row;
-    arrCopy[index].column = arrCopy[blankIndex].column;
-    arrCopy[blankIndex].row = row;
-    arrCopy[blankIndex].column = column;
-    arrCopy[index].image = arrCopy[blankIndex].image;
-    arrCopy[blankIndex].image = image;
+    let image = arrCopy[blankIndex].image
+    arrCopy[blankIndex].currentPosition = tilePosition
+    arrCopy[index].currentPosition = blankIndex;
+    arrCopy[blankIndex].image = arrCopy[index].image;
+    arrCopy[index].image = image;
     arrCopy[index].blank = true;
     arrCopy[blankIndex].blank = false;
+    
+
+    // let row = arrCopy[index].row
+    // let column = arrCopy[index].column
+    // let image = arrCopy[index].image
+
+    // arrCopy[index].row = arrCopy[blankIndex].row;
+    // arrCopy[index].column = arrCopy[blankIndex].column;
+    // arrCopy[blankIndex].row = row;
+    // arrCopy[blankIndex].column = column;
+    // arrCopy[index].image = arrCopy[blankIndex].image;
+    // arrCopy[blankIndex].image = image;
+    // arrCopy[index].blank = true;
+    // arrCopy[blankIndex].blank = false;
 
 
     this.setState({
       tileArr: arrCopy,
-      indexOfBlank: blankIndex
+      indexOfBlank: index
     })
 
     // let blankRow = this.tileArray[15].row
