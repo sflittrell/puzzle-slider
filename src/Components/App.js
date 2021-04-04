@@ -14,12 +14,13 @@ class App extends React.Component {
       indexOfBlank: 15,
 
     }
-this.switch = this.switch.bind(this);
-this.canSwitch = this.canSwitch.bind(this);
+    this.switch = this.switch.bind(this);
+    this.canSwitch = this.canSwitch.bind(this);
+    this.shuffle = this.shuffle.bind(this);
   }
 
   componentDidMount() {
-    this.generateTile(this.state.gridWidth)
+    this.generateTile(this.state.gridWidth);
   }
 
   generateTile(gW) { //gridWidth
@@ -36,7 +37,8 @@ this.canSwitch = this.canSwitch.bind(this);
         winPosition: i,
         index: i, // is this needed?
         blank: blank1,
-        image: i
+        // image: i,
+        gW: this.state.gridWidth
       }
       // console.log(tile)
       board.push(tile)
@@ -48,102 +50,82 @@ this.canSwitch = this.canSwitch.bind(this);
     })
   }
 
-  shuffle() {
+  randomNum() {
+    let num = Math.floor(Math.random() * (this.state.gridWidth * this.state.gridWidth + 1));
+    return num;
+  }
 
+  shuffle() {
+    for (let j = 0; j < 10; j++) {
+      console.log('this is j', j)
+      let num = Math.floor(Math.random() * (this.state.gridWidth * this.state.gridWidth + 1));
+      console.log('random number', num)
+      if (this.canSwitch(num)) {
+        this.switch(num);
+      } else {
+        j--
+      }
+    }
   }
 
   canSwitch(i) {
     let canSwitch = false;
     let gW = this.state.gridWidth
     let indexOfBlank = this.state.indexOfBlank
-    console.log('index of blank', indexOfBlank)
+    // console.log('index of blank', indexOfBlank)
     console.log('index of clicked', i)
-    if (Math.floor(indexOfBlank / gW) == Math.floor(i / gW) && (Math.abs((indexOfBlank % gW) - (i % gW)) == 1)) {
+    if (Math.floor(indexOfBlank / gW) === Math.floor(i / gW) && (Math.abs((indexOfBlank % gW) - (i % gW)) === 1)) {
       canSwitch = true
     }
 
-    if ((indexOfBlank % gW) == (i % gW) && (Math.abs(Math.floor(indexOfBlank / gW) - Math.floor(i / gW)) == 1)) {
+    if ((indexOfBlank % gW) === (i % gW) && (Math.abs(Math.floor(indexOfBlank / gW) - Math.floor(i / gW)) === 1)) {
       canSwitch = true
     }
     console.log('can switch', canSwitch)
     return canSwitch
   }
 
-  switch(tilePosition, index) {
+  switch(index) {
     // console.log(this.state.indexOfBlank)
     let blankIndex = this.state.tileArr.findIndex((tile) => tile.blank)
     // console.log(blankIndex)
     // console.log('click')
-    let arrCopy = this.state.tileArr;
-    let image = arrCopy[blankIndex].image
-    arrCopy[blankIndex].currentPosition = tilePosition
+    // let arrCopy = [...this.state.tileArr];
+    let arrCopy = this.state.tileArr.map(obj => { return { ...obj } })
+    console.log(arrCopy)
+    console.log('blank Index', blankIndex)
+    arrCopy[blankIndex].currentPosition = arrCopy[index].currentPosition
     arrCopy[index].currentPosition = blankIndex;
-    arrCopy[blankIndex].image = arrCopy[index].image;
-    arrCopy[index].image = image;
     arrCopy[index].blank = true;
     arrCopy[blankIndex].blank = false;
-    
-
-    // let row = arrCopy[index].row
-    // let column = arrCopy[index].column
-    // let image = arrCopy[index].image
-
-    // arrCopy[index].row = arrCopy[blankIndex].row;
-    // arrCopy[index].column = arrCopy[blankIndex].column;
-    // arrCopy[blankIndex].row = row;
-    // arrCopy[blankIndex].column = column;
-    // arrCopy[index].image = arrCopy[blankIndex].image;
-    // arrCopy[blankIndex].image = image;
-    // arrCopy[index].blank = true;
-    // arrCopy[blankIndex].blank = false;
-
 
     this.setState({
       tileArr: arrCopy,
       indexOfBlank: index
     })
-
-    // let blankRow = this.tileArray[15].row
-    // let blankColumn = this.tileArray[15].column
-    // let clickedRow = this.tileArr[index].row
-    // let clickedColumn = this.tileArr[index].column
-    // setState({
-    //   tileArr: this.state.tileArr.map(tile => {
-    //     if (tile.index === index) {
-    //     tile.row = clickedRow;
-    //     array[index].column = clickedColumn;
-    //     // return tile
-
-    //     if(tile)
-    //     tile.row = blankRow;
-    //     tile.column = blankColumn;
-    //     }
-    //     return
-    //   })
-    // })
   }
 
   checkWin() {
 
-    }
+  }
 
   render() {
 
-      return(
-      <div className = "App container text-center" >
-      <h1>Puzzle Slider</h1>
-      <div className="row">
-        {this.state.tileArr.map((tile, index) =>
-          <Tile
-            tile={tile} 
-            key={index} 
-            switch={this.switch}
-            canSwitch={this.canSwitch}
-          />
-        )}
+    return (
+      <div className="App container text-center" >
+        <h1>Puzzle Slider</h1>
+        <div className="row">
+          {this.state.tileArr.map((tile, index) =>
+            <Tile
+              tile={tile}
+              key={index}
+              switch={this.switch}
+              canSwitch={this.canSwitch}
+            />
+          )}
         </div>
-        <button className="mt-5">
-            Shuffle
+        <button className="mt-5" onClick={this.shuffle}>
+          Shuffle
         </button>
       </div>
     );
