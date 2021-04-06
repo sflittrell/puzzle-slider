@@ -1,7 +1,7 @@
 function Tile(props) {
 
-    let top = -100 * Math.floor(props.tile.currentPosition / props.tile.gW);
-    let left = -100 * (props.tile.currentPosition % props.tile.gW)
+    let top = -100 * Math.floor(props.tile.currentPosition / props.gW);
+    let left = -100 * (props.tile.currentPosition % props.gW)
 
     function switchable() {
         // console.log(props.tile.index)

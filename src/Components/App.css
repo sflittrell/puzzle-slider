@@ -1,8 +1,8 @@
-.square:before {
+/* .square:before {
   content: "";
   display: block;
   padding-top: 100%;
-}
+} */
 .App {
   width: 400px;
 }
