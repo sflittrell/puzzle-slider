@@ -50,28 +50,72 @@ class App extends React.Component {
     return num;
   }
 
+  blankIndex() {
+    let blankIndex = this.state.tileArr.findIndex((tile) => tile.blank)
+    return blankIndex
+  }
+
+  canSwitch(i, blankIndex) {
+    let canSwitch = false;
+    let gW = this.state.gridWidth
+    // let blankIndex = this.state.tileArr.findIndex((tile) => tile.blank)
+    if (Math.floor(blankIndex / gW) === Math.floor(i / gW) && (Math.abs((blankIndex % gW) - (i % gW)) === 1)) {
+      canSwitch = true
+    }
+
+    if ((blankIndex % gW) === (i % gW) && (Math.abs(Math.floor(blankIndex / gW) - Math.floor(i / gW)) === 1)) {
+      canSwitch = true
+    }
+    // console.log('can switch', canSwitch)
+    return canSwitch
+  }
+
+  switch(index) {
+    if(this.canSwitch(index, this.blankIndex())) {
+    let blankIndex = blankIndex()
+    let arrCopy = [...this.state.tileArr];
+    let temp = arrCopy[blankIndex].currentPosition
+    arrCopy[blankIndex].currentPosition = arrCopy[index].currentPosition
+    arrCopy[index].currentPosition = temp;
+    arrCopy[index].blank = true;
+    arrCopy[blankIndex].blank = false;
+
+    this.checkWin()
+
+
+    this.setState({
+      tileArr: arrCopy,
+    })
+  }
+}
+
+  checkWin() {
+    console.log("win check")
+    let win = false;
+    let tile = this.state.tileArr
+    for (let j = 0; j < tile.length; j++) {
+      if (tile[j].currentPosition !== tile[j].index) {
+        win = false;
+        break
+      } else {
+        win = true
+      }
+    }
+    this.setState ({
+          win: win
+        })
+  }
+
   shuffle() {
     let arrCopy = [...this.state.tileArr];
     // console.log(arrCopy)
     // a loop that performs a set number of random tile clicks
-    for (let j = 0; j < 2; j++) {
+    for (let j = 0; j < 100; j++) {
       let blankIndex = arrCopy.findIndex((tile) => tile.blank)
       // console.log(blankIndex)
       let index = this.randomNum();
-      // console.log({index})
 
-      // checks to see if the tile can be clicked
-      let canSwitch = false;
-      let gW = this.state.gridWidth
-      if (Math.floor(blankIndex / gW) === Math.floor(index / gW) && (Math.abs((blankIndex % gW) - (index % gW)) === 1)) {
-        canSwitch = true
-      }
-      if ((blankIndex % gW) === (index % gW) && (Math.abs(Math.floor(blankIndex / gW) - Math.floor(index / gW)) === 1)) {
-        canSwitch = true
-      }
-
-      // switches tiles
-      if (canSwitch) {
+      if (this.canSwitch(index, arrCopy.findIndex((tile) => tile.blank))) {
         let temp = arrCopy[blankIndex].currentPosition
         arrCopy[blankIndex].currentPosition = arrCopy[index].currentPosition
         arrCopy[index].currentPosition = temp;
@@ -85,64 +129,9 @@ class App extends React.Component {
     console.log(this.state)
     this.setState({
       tileArr: arrCopy,
+      win: false
       // indexOfBlank: blankIndex
     })
-  }
-
-  canSwitch(i) {
-    let canSwitch = false;
-    let gW = this.state.gridWidth
-    let indexOfBlank = this.state.tileArr.findIndex((tile) => tile.blank)
-    // console.log('index of blank', indexOfBlank)
-    // console.log('index of clicked', i)
-    if (Math.floor(indexOfBlank / gW) === Math.floor(i / gW) && (Math.abs((indexOfBlank % gW) - (i % gW)) === 1)) {
-      canSwitch = true
-    }
-
-    if ((indexOfBlank % gW) === (i % gW) && (Math.abs(Math.floor(indexOfBlank / gW) - Math.floor(i / gW)) === 1)) {
-      canSwitch = true
-    }
-    // console.log('can switch', canSwitch)
-    return canSwitch
-  }
-
-  switch(index) {
-    let blankIndex = this.state.tileArr.findIndex((tile) => tile.blank)
-    let arrCopy = [...this.state.tileArr];
-    // let arrCopy = this.state.tileArr.map(obj => { return { ...obj } })
-    // console.log(arrCopy)
-    // console.log('blank Index', blankIndex)
-    let temp = arrCopy[blankIndex].currentPosition
-    arrCopy[blankIndex].currentPosition = arrCopy[index].currentPosition
-    arrCopy[index].currentPosition = temp;
-    arrCopy[index].blank = true;
-    arrCopy[blankIndex].blank = false;
-
-    console.log(this.state)
-    this.checkWin()
-    console.log(this.state)
-
-
-    this.setState({
-      tileArr: arrCopy,
-      // indexOfBlank: index
-    })
-  }
-
-  checkWin() {
-    console.log("win check")
-    let win = false;
-    let tile = this.state.tileArr
-    for (let j = 0; j < tile.length; j++) {
-      if (tile[j].currentPosition === tile[j].index) {
-        win = true
-      } else {
-        win = false
-      }
-    }
-    this.setState ({
-          win: win
-        })
   }
 
 
@@ -150,8 +139,9 @@ class App extends React.Component {
 
     return (
       <div className="App container text-center" >
-        <h1>Puzzle Slider</h1>
-        {this.state.win ? <h2>"You Win"</h2> : null}
+        <h1 className="fw-bold">Puzzle Slider</h1>
+        <h6><em>Press Shuffle to start or play again.</em></h6>
+        {this.state.win ? <h2 className="text-danger">"You Win"</h2> : null}
         <div className="row" style={{ width: "400px", height: "400px" }}>
           {this.state.tileArr.map((tile, index) =>
             <Tile
