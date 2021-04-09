@@ -72,7 +72,7 @@ class App extends React.Component {
 
   switch(index) {
     if(this.canSwitch(index, this.blankIndex())) {
-    let blankIndex = blankIndex()
+    let blankIndex = this.blankIndex()
     let arrCopy = [...this.state.tileArr];
     let temp = arrCopy[blankIndex].currentPosition
     arrCopy[blankIndex].currentPosition = arrCopy[index].currentPosition
